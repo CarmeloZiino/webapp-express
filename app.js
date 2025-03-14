@@ -12,7 +12,7 @@ const port = process.env.SERVER_PORT || 3000; //se process.env non è definita, 
 import movieRouter from './routers/movieRouter.js';
 
 // Importo la funzione che applica il middleware a tutte le richieste
-import setImagePath from './middlewares/setImagePath.js';
+import setImagePath from './middlewares/imagePath.js';
 
 
 app.use( express.static('public') ) //middleware per gestire asset statici
@@ -24,7 +24,7 @@ app.use(setImagePath);
 
 // Router Movie
 
-app.use (' /movies' , movieRouter)
+app.use ('/movies' , movieRouter)
 
 // Attivo del server
 app.listen(port, () => {

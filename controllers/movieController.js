@@ -1,7 +1,7 @@
 import connection from '../data/db.js';
 
 function index(req, res) {   //per mostrare la lista di tutti i film
-  const sql = 'SELECT * FROM movie'; //prende tutti i film dal DB
+  const sql = 'SELECT * FROM `webapp-express`.movies'; //prende tutti i film dal DB
 
   connection.query(sql, (err, results) => {  //esegue la query per ottenre il film
     if (err) //se c'è un errore risponde con status 500, se no restituisce i film in json
@@ -16,9 +16,9 @@ function index(req, res) {   //per mostrare la lista di tutti i film
 function show(req, res) {   //per mostrare i dettagli di un singolo film + recensioni
   const { id } = req.params; //estrae l'id del film dalla richiesta
 
-  const movieSql = 'SELECT * FROM movie WHERE id= ?';
+  const movieSql = 'SELECT * FROM `webapp-express`.movies WHERE id= ?';
 
-  const reviewsSql = 'SELECT * FROM reviews WHERE movie_id = ?'; //Cerca le recensioni di QUEL film
+  const reviewsSql = 'SELECT * FROM `webapp-express`.reviews WHERE movie_id = ?'; //Cerca le recensioni di QUEL film
 
   connection.query(movieSql, [id], (err, results) => {
     if (err)
@@ -28,7 +28,7 @@ function show(req, res) {   //per mostrare i dettagli di un singolo film + recen
 
     if (results.length === 0)
       return res.status(404).json({
-        error: 'Book not found',
+        error: 'Movie not found',
       });
 
     const movie = results[0];
@@ -45,10 +45,11 @@ function show(req, res) {   //per mostrare i dettagli di un singolo film + recen
   });
 }
 
+
 function destroy(req, res) {  // emilina un film dal database
   const { id } = req.params; //prende l'id del film 
 
-  const sql = 'DELETE FROM movies WHERE id = ?'; //comando sql per cancellare il film
+  const sql = 'DELETE FROM `webapp-express`.movie WHERE id = ?'; //comando sql per cancellare il film
 
   connection.query(sql, [id], (err) => { //esegue l'operazione nel database
     if (err)
