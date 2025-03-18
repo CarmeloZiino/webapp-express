@@ -1,6 +1,8 @@
 import connection from '../data/db.js';
 
 function index(req, res) {   //per mostrare la lista di tutti i film
+  const imagePath = 'http://localhost:3000/img/movie/movies_cover/'; //percorso per gestire immagini
+
   const sql = 'SELECT * FROM movies'; //prende tutti i film dal DB
 
   connection.query(sql, (err, results) => {  //esegue la query per ottenre il film
@@ -9,9 +11,17 @@ function index(req, res) {   //per mostrare la lista di tutti i film
         error: 'Errore lato server INDEX function',
       });
 
-    res.json(results);
+      const movies = results.map(m => {
+        return {
+            ...m,
+            image: imagePath + m.image, // Concatenazione del nome immagine con il percorso completo
+        };
+    });
+
+    res.json(movies);
   });
 }
+
 
 function show(req, res) {   //per mostrare i dettagli di un singolo film + recensioni
   const { id } = req.params; //estrae l'id del film dalla richiesta
@@ -40,7 +50,13 @@ function show(req, res) {   //per mostrare i dettagli di un singolo film + recen
         });
 
       movie.reviews = reviewsResults;
-      res.json(movie);
+      // res.json(movie);
+
+      res.json({
+        ...movie,
+        image: req.imagePath + movie.image });
+
+
     });
   });
 }
