@@ -2,7 +2,7 @@ import express from 'express';
 
 const router = express.Router();
 
-import { index, show, destroy } from '../controllers/movieController.js';
+import { index, show, destroy, storeReview } from '../controllers/movieController.js';
 
 //Rotte per i Film
 
@@ -17,5 +17,9 @@ router.get('/:id', show);
 //destroy
 //localhost:3000/api/movies/:id
 router.delete('/:id', destroy);
+
+
+//StoreReview
+router.post('/:id/reviews' , storeReview)
 
 export default router;
