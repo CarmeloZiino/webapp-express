@@ -29,7 +29,14 @@ function show(req, res) {
   //per mostrare i dettagli di un singolo film + recensioni
   const { id } = req.params; //estrae l'id del film dalla richiesta
 
-  const movieSql = "SELECT * FROM movies WHERE id= ?";
+  // const movieSql = "SELECT * FROM movies WHERE id= ?";
+
+  const movieSql = `
+      SELECT M.*, ROUND( AVG(R.vote)) AS average_vote
+      FROM movies M
+      LEFT JOIN reviews R
+      ON R.movie_id = M.id
+      WHERE M.id = ?`;
 
   const reviewsSql = "SELECT * FROM reviews WHERE movie_id = ?"; //Cerca le recensioni di QUEL film
 
@@ -52,12 +59,14 @@ function show(req, res) {
           error: "Errore lato server SHOW function",
         });
 
-      movie.reviews = reviewsResults;
+      // movie.reviews = reviewsResults;
       // res.json(movie);
 
       res.json({
         ...movie,
         image: req.imagePath + movie.image,
+        average_vote: parseInt(movie.average_vote),
+        reviews: reviewsResults
       });
     });
   });
@@ -102,31 +111,27 @@ function storeReview(req, res) {
   });
 }
 
-function store(req, res) {
+function store(req,res){
   //recuparare le info da req.body
-  const { title, author, abstract } = req.body;
+  const { title, director, abstract} = req.body
 
-  const imageName = `${req.file.filename}`;
+  const imageName = `${req.file.filename}`
 
-  const sql =
-    "INSERT INTO books (title, author, image, abstract) VALUES (?,?,?,?)";
+  const sql = "INSERT INTO movies (title, director, image, abstract) VALUES (?,?,?,?)"
 
-  connection.query(
-    sql,
-    [title, author, imageName, abstract],
-    (err, results) => {
-      if (err)
-        return res.status(500).json({
-          error: "Database Errore Store",
-        });
+  connection.query( sql, [title, director, imageName, abstract], (err, results) => {
+      if(err) return res.status(500).json({
+          error: 'Database Errore Store'
+      })
 
       res.status(201).json({
-        status: "success",
-        message: "Libro creato con successo",
-        id: results.insertId,
-      });
-    }
-  );
+          status: "success",
+          message: "Film creato con successo",
+          id: results.insertId
+      }
+      )
+  })
+
 }
 
 export { index, show, destroy, storeReview, store };
