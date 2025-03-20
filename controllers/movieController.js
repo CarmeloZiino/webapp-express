@@ -102,4 +102,31 @@ function storeReview(req, res) {
   });
 }
 
-export { index, show, destroy, storeReview };
+function store(req, res) {
+  //recuparare le info da req.body
+  const { title, author, abstract } = req.body;
+
+  const imageName = `${req.file.filename}`;
+
+  const sql =
+    "INSERT INTO books (title, author, image, abstract) VALUES (?,?,?,?)";
+
+  connection.query(
+    sql,
+    [title, author, imageName, abstract],
+    (err, results) => {
+      if (err)
+        return res.status(500).json({
+          error: "Database Errore Store",
+        });
+
+      res.status(201).json({
+        status: "success",
+        message: "Libro creato con successo",
+        id: results.insertId,
+      });
+    }
+  );
+}
+
+export { index, show, destroy, storeReview, store };
